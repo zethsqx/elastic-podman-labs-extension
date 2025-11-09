@@ -23,7 +23,6 @@ sudo -i
 ```
 
 ### 2. Cleanup any existing containers or networks
-# Clean up any existing containers
 
 ```bash
 podman stop es01 es02 es03 2>/dev/null || true
@@ -150,8 +149,9 @@ cd /home/student/es-lab
 chmod -R 640 *
 ```
 
-### 3. Bring up 4 Node Cluster (2 Dedicated master, 1 Master+Hot, 1 Hot)
-```
+### 3. Bring up 4 Node Cluster (2 Dedicated Master, 1 Master+Hot, 1 Hot)
+
+```bash
 podman run -d --name es01 \
   --net elastic \
   -p 9200:9200 \
@@ -259,20 +259,23 @@ podman run -d --name hot01 \
 ```
 
 ### 4. Test the connectivity and password
-```
+
+```bash
 curl -kv -u elastic:Password123! https://localhost:9200/
 curl -kv -u elastic:Password123! https://localhost:9200/_cluster/health?pretty
 curl -kv -u elastic:Password123! https://localhost:9200/_cat/nodes?v
 ```
 
 ### 5. Create a Data Stream
-```
+
+```bash
 curl -kv -u elastic:Password123! -X PUT https://localhost:9200/_data_stream/logs-foo-bar
 curl -kv -u elastic:Password123! https://localhost:9200/_cat/indices?expand_wildcards=all
 ```
 
 # Clean up before proceeding
-```
+
+```bash
 podman stop es01 es02 es03 hot01 2>/dev/null || true
 podman rm -f es01 es02 es03 hot01 2>/dev/null || true
 podman network rm elastic 2>/dev/null || true
