@@ -88,7 +88,7 @@ podman run -d --name es03 \
   docker.elastic.co/elasticsearch/elasticsearch:8.15.3
 ```
 
-### 5️⃣ Verify the cluster
+### 5️⃣ Verify the cluster (Wait for a few minute for cluster to come up)
 
 ```bash
 podman ps
