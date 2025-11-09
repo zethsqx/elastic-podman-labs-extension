@@ -32,3 +32,4 @@ openssl req -new -key es-wildcard.key -out es-wildcard.csr -config es-wildcard.c
 openssl x509 -req -in es-wildcard.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out es-wildcard.crt -days 825 -sha256 -extensions ext -extfile es-wildcard.cnf
 
 cd /home/student/es-lab
+chmod -R 640 *
