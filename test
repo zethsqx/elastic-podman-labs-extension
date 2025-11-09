@@ -1,64 +1,34 @@
-cat > generate-es-certs.sh << 'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
+mkdir -p /home/student/es-lab/certs
+cd /home/student/es-lab/certs
 
-# === CONFIG ===
-DOMAIN="es-lab.local"
-WILDCARD="*.${DOMAIN}"
-OUTDIR="certs"
-
-mkdir -p "${OUTDIR}"
-cd "${OUTDIR}"
-
-echo "==> Generating CA key + certificate..."
 openssl genrsa -out ca.key 4096
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 -out ca.crt -subj "/CN=es-lab-CA"
 
-openssl req -x509 -new -nodes \
-  -key ca.key \
-  -sha256 -days 3650 \
-  -out ca.crt \
-  -subj "/CN=es-lab-CA"
-
-echo "==> Generating wildcard key for ${WILDCARD}..."
 openssl genrsa -out es-wildcard.key 4096
 
-cat > es-wildcard-openssl.cnf <<CFG
+cat > es-wildcard.cnf <<EOF
 [ req ]
 default_bits       = 4096
-distinguished_name = req_distinguished_name
-req_extensions     = v3_req
+distinguished_name = dn
+req_extensions     = ext
 prompt             = no
 
-[ req_distinguished_name ]
-CN = ${WILDCARD}
+[ dn ]
+CN = *.es-lab.local
 
-[ v3_req ]
+[ ext ]
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = es01.${DOMAIN}
-DNS.2 = es02.${DOMAIN}
-DNS.3 = es03.${DOMAIN}
-DNS.4 = ${DOMAIN}
-DNS.5 = ${WILDCARD}
-CFG
-
-echo "==> Creating CSR for ${WILDCARD} with SANs..."
-openssl req -new \
-  -key es-wildcard.key \
-  -out es-wildcard.csr \
-  -config es-wildcard-openssl.cnf
-
-echo "==> Signing wildcard cert with our CA..."
-openssl x509 -req \
-  -in es-wildcard.csr \
-  -CA ca.crt -CAkey ca.key -CAcreateserial \
-  -out es-wildcard.crt \
-  -days 825 -sha256 \
-  -extensions v3_req \
-  -extfile es-wildcard-openssl.cnf
-
-echo
-echo "==> Done. Generated files:"
-ls -1
+DNS.1 = es01.es-lab.local
+DNS.2 = es02.es-lab.local
+DNS.3 = es03.es-lab.local
+DNS.4 = hot01.es-lab.local
+DNS.5 = es-lab.local
+DNS.6 = *.es-lab.local
 EOF
+
+openssl req -new -key es-wildcard.key -out es-wildcard.csr -config es-wildcard.cnf
+openssl x509 -req -in es-wildcard.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out es-wildcard.crt -days 825 -sha256 -extensions ext -extfile es-wildcard.cnf
+
+cd /home/student/es-lab
