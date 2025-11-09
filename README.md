@@ -1,6 +1,6 @@
 # 🧩 Extra Lab 1: Elasticsearch 3-Node Cluster on Podman
 
-This lab spins up as identical of a **production-style Elasticsearch cluster** using only `podman` commands — no Docker or Compose needed.  
+This lab spins up a **Elasticsearch cluster** using only `podman` commands — no Docker or Compose needed.  
 It’s designed as extension of Elastic Instruqt Lab (ECK 101 Workshop) use, and works inside that minimal environments.
 
 ---
