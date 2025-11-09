@@ -147,6 +147,8 @@ openssl x509 -req -in es-wildcard.csr -CA ca.crt -CAkey ca.key -CAcreateserial -
 
 cd /home/student/es-lab
 chmod -R 640 *
+
+cd /home/student/es-lab/certs
 ```
 
 ### 3. Bring up 4 Node Cluster (2 Dedicated Master, 1 Master+Hot, 1 Hot)
