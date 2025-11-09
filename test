@@ -1,0 +1,64 @@
+cat > generate-es-certs.sh << 'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+# === CONFIG ===
+DOMAIN="es-lab.local"
+WILDCARD="*.${DOMAIN}"
+OUTDIR="certs"
+
+mkdir -p "${OUTDIR}"
+cd "${OUTDIR}"
+
+echo "==> Generating CA key + certificate..."
+openssl genrsa -out ca.key 4096
+
+openssl req -x509 -new -nodes \
+  -key ca.key \
+  -sha256 -days 3650 \
+  -out ca.crt \
+  -subj "/CN=es-lab-CA"
+
+echo "==> Generating wildcard key for ${WILDCARD}..."
+openssl genrsa -out es-wildcard.key 4096
+
+cat > es-wildcard-openssl.cnf <<CFG
+[ req ]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+req_extensions     = v3_req
+prompt             = no
+
+[ req_distinguished_name ]
+CN = ${WILDCARD}
+
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = es01.${DOMAIN}
+DNS.2 = es02.${DOMAIN}
+DNS.3 = es03.${DOMAIN}
+DNS.4 = ${DOMAIN}
+DNS.5 = ${WILDCARD}
+CFG
+
+echo "==> Creating CSR for ${WILDCARD} with SANs..."
+openssl req -new \
+  -key es-wildcard.key \
+  -out es-wildcard.csr \
+  -config es-wildcard-openssl.cnf
+
+echo "==> Signing wildcard cert with our CA..."
+openssl x509 -req \
+  -in es-wildcard.csr \
+  -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -out es-wildcard.crt \
+  -days 825 -sha256 \
+  -extensions v3_req \
+  -extfile es-wildcard-openssl.cnf
+
+echo
+echo "==> Done. Generated files:"
+ls -1
+EOF
