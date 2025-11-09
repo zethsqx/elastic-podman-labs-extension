@@ -264,3 +264,18 @@ curl -kv -u elastic:Password123! https://localhost:9200/
 curl -kv -u elastic:Password123! https://localhost:9200/_cluster/health?pretty
 curl -kv -u elastic:Password123! https://localhost:9200/_cat/nodes?v
 ```
+
+### 5. Create a Data Stream
+```
+curl -kv -u elastic:Password123! -X PUT https://localhost:9200/_data_stream/logs-foo-bar
+curl -kv -u elastic:Password123! https://localhost:9200/_cat/indices?expand_wildcards=all
+```
+
+# Clean up before proceeding
+```
+podman stop es01 es02 es03 hot01 2>/dev/null || true
+podman rm -f es01 es02 es03 hot01 2>/dev/null || true
+podman network rm elastic 2>/dev/null || true
+podman system prune -a -f
+```
+
