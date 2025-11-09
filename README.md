@@ -261,6 +261,7 @@ podman run -d --name hot01 \
 ### 4. Test the connectivity and password
 
 ```bash
+podman ps
 curl -kv -u elastic:Password123! https://localhost:9200/
 curl -kv -u elastic:Password123! https://localhost:9200/_cluster/health?pretty
 curl -kv -u elastic:Password123! https://localhost:9200/_cat/nodes?v
