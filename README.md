@@ -1,4 +1,4 @@
-# 🧩 Extra Lab 1: Elasticsearch 3-Node Cluster on Podman
+# 🧩 Extra Lab 1: Elasticsearch 3-Node Cluster (3 All-In-One/Uniform)
 
 This lab spins up a **Elasticsearch cluster** using only `podman` commands — no Docker or Compose needed.  
 It’s designed as extension of Elastic Instruqt Lab (ECK 101 Workshop) use, and works inside that minimal environments.
@@ -96,7 +96,7 @@ curl -s http://localhost:9200/
 curl -s http://localhost:9200/_cat/nodes?v
 ```
 
-# 🧩 Extra Lab 2: Elasticsearch 3-Node Cluster on Podman
+# 🧩 Extra Lab 2: Elasticsearch 4-Node Cluster (2 Dedicated Master, 1 Master+Hot, 1 Hot)
 
 ### 1. Clean up and recreate the Podman network
 
@@ -151,7 +151,7 @@ chmod -R 777 *
 cd /home/student/es-lab/certs
 ```
 
-### 3. Bring up 4 Node Cluster (2 Dedicated Master, 1 Master+Hot, 1 Hot)
+### 3. Bring up Cluster
 
 ```bash
 podman run -d --name es01 \
